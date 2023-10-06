@@ -25,6 +25,11 @@ const orderSchema = new mongoose.Schema({
     },
     otp: {
         type: String
+    },
+    payment: {
+        type: String,
+        enum: ['Paid','Due'],
+        default: 'Due'
     }
 })
 module.exports = mongoose.model('order',orderSchema);

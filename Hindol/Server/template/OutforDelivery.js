@@ -35,7 +35,7 @@ module.exports = async (user, order, product, phoneNo) => {
                     <ul>
                         <li>Order ID: ${order._id}</li>
                         <li>Product: ${product.name}</li>
-                        <li>Price: Rs.${order.price}</li>
+                        <li>Payment Due: Rs.${order.payment === 'Due' ? order.price : 0}</li>
                         <li>Delivery Agent No: ${phoneNo}</li>
                     </ul>
                     <p>Thank you for choosing our service!</p>
