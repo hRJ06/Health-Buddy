@@ -426,28 +426,63 @@ exports.getCategoryProducts = async(req, res) => {
         })
     }
 }
-exports.getNameProducts = async(req, res) => {
+exports.getNameProducts = async (req, res) => {
     try {
-        const {searchQuery} = req.body;
-        const products = await Product.find({status: 'Approved'});
+        const { searchQuery } = req.body;
+        const products = await Product.find({ status: 'Approved' });
+        const regexPattern = new RegExp(searchQuery, 'i'); 
         const filteredProducts = products.filter(product => {
-            return product.name.toLowerCase().includes(searchQuery.toLowerCase());
+            return regexPattern.test(product.name);
         });
-
         return res.status(200).json({
             success: true,
             message: 'Products fetched',
             products: filteredProducts
         });
-    }
+    } 
     catch (err) {
         console.error(err);
         return res.status(500).json({
             success: false,
             message: 'Error getting name products'
-        })
+        });
+    }
+};
+exports.filterProducts = async(req, res) => {
+    try {
+        const { searchQuery, type } = req.body;
+        const products = await Product.find({ status: 'Approved' });
+        const regexPattern = new RegExp(searchQuery, 'i');
+        const filteredByName = products.filter(product => {
+            return regexPattern.test(product.name);
+        });
+        if(type) {
+            const filteredProducts = filteredByName.filter(product => {
+                return product.type === type;
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'Products fetched',
+                products: filteredProducts
+            });
+        } 
+        else {
+            return res.status(200).json({
+                success: true,
+                message: 'Successfully fetched products',
+                products: filteredByName
+            });
+        }
+    } 
+    catch(err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Error filtering products'
+        });
     }
 }
+
 exports.getAllPets = async(req, res) => {
     try {
         const {token} = req.body;
