@@ -624,34 +624,6 @@ exports.removeFromCart = async(req, res) => {
         })
     }
 }
-exports.getCartItems = async(req, res) => {
-    try {
-        const {token} = req.body;
-        let decode = null;
-        try {
-            decode = jwt.verify(token,process.env.JWT_SECRET);
-        }
-        catch (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error validating token'
-            })
-        }
-        const cartItems = await Cart.find({});
-        return res.status(200).json({
-            success: true,
-            message: 'Successfully retrieved Cart items',
-            items: cartItems
-        })
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).json({
-            success: false,
-            message: 'Error getting Cart Items'
-        })
-    }
-}
 const checkExpiredCartItems = async(req, res) => {
     try {
         const currentTime = new Date();
