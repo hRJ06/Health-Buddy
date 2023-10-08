@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup, login, addPet, bookAppointment, getAllProducts, getCategoryProducts, getNameProducts, getAllPets, getUserDetails, AddToCart, removeFromCart, updateProfilePicture, getAppointments, editUserDetails, cancelAppointment, getSlots, addReview, filterProducts } = require('../controller/User');
+const { signup, login, addPet, bookAppointment, getAllProducts, getCategoryProducts, getNameProducts, getAllPets, getUserDetails, AddToCart, removeFromCart, updateProfilePicture, getAppointments, editUserDetails, cancelAppointment, getSlots, addReview, filterProducts, getCartItems } = require('../controller/User');
 const router = express.Router();
 
 router.post('/signup',signup); 
@@ -20,5 +20,6 @@ router.post('/updateProfilePicture',updateProfilePicture);
 router.post('/getSlots',getSlots);
 router.post('/addReview',addReview);
 router.post('/filterProducts',filterProducts);
+router.post('/getCartItems',getCartItems);
 
 module.exports = router;
