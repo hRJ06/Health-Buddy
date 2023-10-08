@@ -971,7 +971,45 @@ exports.addReview = async(req, res) => {
         })
     }
 }
-
+exports.getCartItems = async(req, res) => {
+    try {
+        const {token} = req.body;
+        if(!token) {
+            return res.status(500).json({
+                success: false,
+                message: 'Token missing'
+            })
+        }
+        let decode = null;
+        try {
+            decode = jwt.verify(token, process.env.JWT_SECRET);
+        }
+        catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error validating token'
+            })
+        }
+        const user = await User.findById({ _id: decode.id }).populate({
+            path: 'cartItems',
+            populate: {
+                path: 'productId',
+            }
+        }).exec();
+        return res.status(200).json({
+            success: true,
+            message: 'Successfully fetched Cart Items',
+            items: user.cartItems
+        })
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error Getting Cart Details'
+        })
+    }
+}
 
 
 
