@@ -244,6 +244,7 @@ exports.resetPassword = async(req, res) => {
 exports.addProduct = async(req, res) => {
     try {
         const {name, description, tag, type, token, price, quantity} = req.body;
+        console.log(req.body)
         if(!name || !description || !tag || !type || !quantity) {
             return res.status(404).json({
                 success: false,
@@ -265,6 +266,10 @@ exports.addProduct = async(req, res) => {
             $push: {
                 products: product._id
             }
+        })
+        return res.status(200).json({
+            success: true,
+            message: 'Product Added Successfully'
         })
     }
     catch (err) {
@@ -305,6 +310,38 @@ exports.editProduct = async(req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Unable to edit product'
+        })
+    }
+}
+exports.removeProductImage = async(req, res) => {
+    try {
+        const {productId} = req.params
+        const {image} = req.body
+        const product = await Product.findById({_id : new mongoose.Types.ObjectId(productId)});
+        if(!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Please provide a valid Product ID'
+            })
+        }
+        await Product.findByIdAndUpdate({
+            _id: new mongoose.Types.ObjectId(productId)},
+            {
+                $pull: {
+                    images: image
+                }
+            }
+        )
+        return res.status(200).json({
+            success: true,
+            message: 'Successfully Removed Image from Product'
+        })
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Unable To Remove Image From Product'
         })
     }
 }
@@ -386,6 +423,32 @@ exports.getRetailerDetails = async(req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Unable to get Retailer Details'
+        })
+    }
+}
+exports.getProductDetails = async(req, res) => {
+    try {
+        const {productId} = req.params;
+        if(!productId) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product ID missing'
+            })
+        }
+        const product = await Product.findById({_id : new mongoose.Types.ObjectId(productId)}).populate('owner').exec();
+        const similarProducts = await Product.find({tag: product.tag, _id: {$ne: product._id}}).populate('owner').exec();
+        return res.status(200).json({
+            success: true,
+            message: 'Product Details fetched successfully',
+            product: product,
+            similarProducts: similarProducts 
+        })
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to get Product Details'
         })
     }
 }
