@@ -6,10 +6,7 @@ exports.getAppointments = async (req, res) => {
     const pet = await Pet.findById({ _id: new mongoose.Types.ObjectId(petId) })
       .populate({
         path: "appointments",
-        populate: [
-          { path: "doctor" },
-          { path: "slot" },
-        ],
+        populate: [{ path: "doctor" }, { path: "slot" }],
       })
       .exec();
     return res.status(200).json({
